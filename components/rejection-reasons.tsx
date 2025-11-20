@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { AlertTriangle } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface RejectionReason {
   reason: string
@@ -9,8 +10,22 @@ interface RejectionReason {
   maxCount: number
 }
 
-function RejectionReasonBar({ reason, count, maxCount }: RejectionReason) {
+interface RejectionReasonBarProps extends RejectionReason {
+  index: number
+}
+
+function RejectionReasonBar({ reason, count, maxCount, index }: RejectionReasonBarProps) {
   const percentage = (count / maxCount) * 100
+  const [animatedWidth, setAnimatedWidth] = useState(0)
+
+  useEffect(() => {
+    const delay = index * 200 
+    const timer = setTimeout(() => {
+      setAnimatedWidth(percentage)
+    }, delay)
+
+    return () => clearTimeout(timer)
+  }, [percentage, index])
 
   return (
     <div className="flex items-center gap-4 mb-3">
@@ -20,8 +35,8 @@ function RejectionReasonBar({ reason, count, maxCount }: RejectionReason) {
       <div className="flex-1 flex items-center gap-2">
         <div className="flex-1 h-6 bg-gray-200 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-red-500 rounded-full"
-            style={{ width: `${percentage}%` }}
+            className="h-full bg-red-500 rounded-full transition-all duration-700 ease-out"
+            style={{ width: `${animatedWidth}%` }}
           />
         </div>
         <div className="w-12 text-sm font-semibold text-gray-900 text-right">
@@ -52,7 +67,7 @@ export function RejectionReasons() {
         </div>
         <div>
           {reasons.map((reason, index) => (
-            <RejectionReasonBar key={index} {...reason} />
+            <RejectionReasonBar key={index} {...reason} index={index} />
           ))}
         </div>
       </CardContent>

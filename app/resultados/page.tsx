@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Filter, Download, Search } from "lucide-react"
+import AnimationDiv from "@/components/animation/animation-div"
 
 export default function ResultadosPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -27,70 +28,74 @@ export default function ResultadosPage() {
                 Compras e decisões de risco & identidade
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="w-4 h-4" />
-                Configurar
-              </Button>
-              <Button variant="success" className="flex items-center gap-2">
-                <Download className="w-4 h-4" />
-                Exportar
-              </Button>
-            </div>
+            <AnimationDiv position="center">
+              <div className="flex items-center gap-2">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Filter className="w-4 h-4" />
+                  Configurar
+                </Button>
+                <Button variant="success" className="flex items-center gap-2">
+                  <Download className="w-4 h-4" />
+                  Exportar
+                </Button>
+              </div>
+            </AnimationDiv>
           </div>
           
-          <ResultsKPICards />
-          <RejectionReasons />
-          
-          <div className="flex items-center bg-[#f3f1ec] hover:shadow-lg shadow-sm transition-shadow duration-300 border border-[#e0e0e0] px-6 py-4 rounded-lg gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Buscar por Order ID ou External Ref..."
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+          <AnimationDiv position="left">
+            <ResultsKPICards />
+            <RejectionReasons />
+            
+            <div className="flex items-center bg-[#f3f1ec] hover:shadow-lg shadow-sm transition-shadow duration-300 border border-[#e0e0e0] px-6 py-4 rounded-lg gap-4 mb-6">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Buscar por Order ID ou External Ref..."
+                  className="pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <Select>
+                  <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Todas as decisões" />
+                  </SelectTrigger>
+
+                  <SelectContent className="bg-white">
+                      <SelectItem
+                      value="all"
+                      className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
+                      >
+                          Todas as decisões
+                      </SelectItem>
+
+                      <SelectItem
+                      value="approved"
+                      className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
+                      >
+                          Aprovado
+                      </SelectItem>
+
+                      <SelectItem
+                      value="rejected"
+                      className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
+                      >
+                          Recusadas
+                      </SelectItem>
+
+                      <SelectItem
+                      value="review"
+                      className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
+                      >
+                          Revisão Manual
+                      </SelectItem>
+                  </SelectContent>
+              </Select>
             </div>
-            <Select>
-                <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Todas as decisões" />
-                </SelectTrigger>
-
-                <SelectContent className="bg-white">
-                    <SelectItem
-                    value="all"
-                    className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
-                    >
-                        Todas as decisões
-                    </SelectItem>
-
-                    <SelectItem
-                    value="approved"
-                    className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
-                    >
-                        Aprovado
-                    </SelectItem>
-
-                    <SelectItem
-                    value="rejected"
-                    className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
-                    >
-                        Recusadas
-                    </SelectItem>
-
-                    <SelectItem
-                    value="review"
-                    className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
-                    >
-                        Revisão Manual
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-          </div>
-          
-          <ResultsTable searchQuery={searchQuery} />
+            
+            <ResultsTable searchQuery={searchQuery} />
+          </AnimationDiv>
         </div>
       </main>
     </div>

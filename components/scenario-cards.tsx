@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { FolderOpen, TrendingUp, Copy } from "lucide-react"
+import { FolderOpen, TrendingUp, Copy, Archive } from "lucide-react"
 
 interface ScenarioCardProps {
   title: string
@@ -74,7 +74,7 @@ function ScenarioCard({
                 <Copy className="w-4 h-4" />
               </Button>
               <Button variant="outline" size="icon" className="h-9 w-9">
-                <Copy className="w-4 h-4" />
+                <Archive className="w-4 h-4" />
               </Button>
             </div>
           </div>

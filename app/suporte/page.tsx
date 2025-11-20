@@ -1,40 +1,42 @@
+"use client"
+
+import AnimationDiv from "@/components/animation/animation-div"
 import { Sidebar } from "@/components/sidebar"
-import { SimulatorKPICards } from "@/components/simulator-kpi-cards"
-import { ScenarioCards } from "@/components/scenario-cards"
+import { SupportKPICards } from "@/components/support-kpi-cards"
+import { TicketsTable } from "@/components/tickets-table"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import AnimationDiv from "@/components/animation/animation-div"
 
-export default function SimuladorPage() {
+export default function SuportePage() {
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar currentPath="/simulador" />
+      <Sidebar currentPath="/suporte" />
       <main className="flex-1 ml-64 h-screen overflow-y-auto p-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Simulador de Políticas
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Suporte
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Teste o impacto de políticas em dados históricos sem afetar produção
+              <p className="text-gray-600">
+                Gerencie tickets e atendimento ao cliente
               </p>
             </div>
             <AnimationDiv position="center">
               <Button variant="success" className="flex items-center gap-2">
                 <Plus className="w-4 h-4" />
-                Novo Cenário
+                Abrir Ticket
               </Button>
             </AnimationDiv>
           </div>
-          
+
           <AnimationDiv position="left">
-            <SimulatorKPICards />
-            <ScenarioCards />
+            <SupportKPICards />
+            
+            <TicketsTable />
           </AnimationDiv>
         </div>
       </main>
     </div>
   )
 }
-

@@ -3,6 +3,7 @@ import { KPICards } from "@/components/kpi-cards"
 import { StoreCards } from "@/components/store-cards"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import AnimationDiv from "@/components/animation/animation-div"
 
 export default function Home() {
   return (
@@ -19,14 +20,20 @@ export default function Home() {
                 Gerencie suas lojas e monitore a saúde das integrações.
               </p>
             </div>
-            <Button variant="success" className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Nova Integração
-            </Button>
+            <AnimationDiv position="center">
+              <Button variant="success" className="flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Nova Integração
+              </Button>
+            </AnimationDiv>
           </div>
+          <AnimationDiv position="left">
+            <KPICards />
+          </AnimationDiv>
+          <AnimationDiv position="left">
+            <StoreCards /> 
+          </AnimationDiv>
           
-          <KPICards />
-          <StoreCards />
         </div>
       </main>
     </div>

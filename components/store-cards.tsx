@@ -18,7 +18,7 @@ function StoreCard({ platform, status, url, id, lastSync, policy, currency }: St
   const getPlatformColor = (platform: string) => {
     switch (platform.toLowerCase()) {
       case "shopify":
-        return "purple"
+        return "rose"
       case "woocommerce":
         return "purple"
       case "magento":
@@ -30,25 +30,25 @@ function StoreCard({ platform, status, url, id, lastSync, policy, currency }: St
     }
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusBorder = (status: string) => {
     switch (status) {
       case "active":
-        return "success"
+        return "border-green-500"
       case "paused":
-        return "secondary"
+        return "border-amber-500"
       case "failed":
-        return "destructive"
+        return "border-red-500"
       default:
-        return "default"
+        return "border-gray-300"
     }
-  }
+  }  
 
   const getStatusDot = (status: string) => {
     switch (status) {
       case "active":
         return "bg-green-500"
       case "paused":
-        return "bg-green-500"
+        return "bg-amber-500"
       case "failed":
         return "bg-red-500"
       default:
@@ -64,7 +64,10 @@ function StoreCard({ platform, status, url, id, lastSync, policy, currency }: St
             <Badge variant={getPlatformColor(platform) as any} className="text-xs">
               {platform}
             </Badge>
-            <Badge variant={getStatusColor(status) as any} className="text-xs flex items-center gap-1">
+            <Badge
+              variant="outline"
+              className={`text-xs flex items-center gap-1 ${getStatusBorder(status)}`}
+            >
               <span className={`w-2 h-2 rounded-full ${getStatusDot(status)}`}></span>
               {status}
             </Badge>
