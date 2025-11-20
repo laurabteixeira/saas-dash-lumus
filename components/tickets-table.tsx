@@ -142,7 +142,6 @@ export function TicketsTable() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [priorityFilter, setPriorityFilter] = useState("all")
 
-  // Map filter values to actual ticket values
   const getStatusValue = (filterValue: string): string | null => {
     const statusMap: Record<string, string> = {
       "open": "Aberto",
