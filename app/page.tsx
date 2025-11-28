@@ -1,11 +1,36 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { KPICards } from "@/components/kpi-cards"
-import { StoreCards } from "@/components/store-cards"
+import { StoreCards } from "@/components/integration/store-cards"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import AnimationDiv from "@/components/animation/animation-div"
+import { useStoresStore, Store } from "@/store/useStoresStore"
+import { StorePolicyModal } from "@/components/modals/store-policy-modal"
 
 export default function Home() {
+  const { fetchStores } = useStoresStore()
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    fetchStores()
+  }, [fetchStores])
+
+  const handleConfigurePolicies = (store: Store) => {
+    setSelectedStore(store)
+    setIsModalOpen(true)
+  }
+
+  const handleModalClose = (open: boolean) => {
+    setIsModalOpen(open)
+    if (!open) {
+      setSelectedStore(null)
+    }
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar currentPath="/" />
@@ -27,15 +52,20 @@ export default function Home() {
               </Button>
             </AnimationDiv>
           </div>
-          <AnimationDiv position="left">
+          {/*<AnimationDiv position="left">
             <KPICards />
-          </AnimationDiv>
+          </AnimationDiv>*/}
           <AnimationDiv position="left">
-            <StoreCards /> 
+            <StoreCards onConfigurePolicies={handleConfigurePolicies} /> 
           </AnimationDiv>
           
         </div>
       </main>
+      <StorePolicyModal
+        open={isModalOpen}
+        onOpenChange={handleModalClose}
+        store={selectedStore}
+      />
     </div>
   )
 }
