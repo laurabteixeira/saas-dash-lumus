@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
+import { X, Shield, Scale, Zap } from "lucide-react"
 import { COUNTRIES, getCountryName } from "@/lib/countries"
 import { UpdateStorePolicy } from "@/services/storePolicyServices"
 import { toast } from "sonner"
@@ -34,6 +34,50 @@ const formSchema = z.object({
 })
 
 type FormData = z.infer<typeof formSchema>
+
+interface PolicyTemplate {
+  title: string
+  description: string
+  icon: React.ReactNode
+  blockedCountriesOrigin: string[]
+  blockedCountriesDestination: string[]
+  maxChargebacksPerCustomer: number
+  maxRefundsPerCustomer: number
+  biometricMinOrderAmount: number
+}
+
+const POLICY_TEMPLATES: PolicyTemplate[] = [
+  {
+    title: "Conservadora",
+    description: "Política mais restritiva com maior proteção",
+    icon: <Shield className="w-5 h-5" />,
+    blockedCountriesOrigin: ["CN", "RU", "NG", "PK", "BD"],
+    blockedCountriesDestination: ["CN", "RU", "NG", "PK", "BD"],
+    maxChargebacksPerCustomer: 1,
+    maxRefundsPerCustomer: 2,
+    biometricMinOrderAmount: 50,
+  },
+  {
+    title: "Balanceada",
+    description: "Equilíbrio entre segurança e experiência do cliente",
+    icon: <Scale className="w-5 h-5" />,
+    blockedCountriesOrigin: ["CN", "NG"],
+    blockedCountriesDestination: ["CN", "NG"],
+    maxChargebacksPerCustomer: 2,
+    maxRefundsPerCustomer: 4,
+    biometricMinOrderAmount: 100,
+  },
+  {
+    title: "Permissiva",
+    description: "Política mais flexível para maximizar conversões",
+    icon: <Zap className="w-5 h-5" />,
+    blockedCountriesOrigin: [],
+    blockedCountriesDestination: [],
+    maxChargebacksPerCustomer: 3,
+    maxRefundsPerCustomer: 6,
+    biometricMinOrderAmount: 200,
+  },
+]
 
 export function StorePolicyForm({ 
   store,
@@ -87,6 +131,16 @@ export function StorePolicyForm({
       "blockedCountriesDestination",
       blockedCountriesDestination.filter((code) => code !== countryCode)
     )
+  }
+
+  const applyTemplate = (template: PolicyTemplate) => {
+    form.setValue("title", template.title)
+    form.setValue("blockedCountriesOrigin", template.blockedCountriesOrigin)
+    form.setValue("blockedCountriesDestination", template.blockedCountriesDestination)
+    form.setValue("maxChargebacksPerCustomer", template.maxChargebacksPerCustomer)
+    form.setValue("maxRefundsPerCustomer", template.maxRefundsPerCustomer)
+    form.setValue("biometricMinOrderAmount", template.biometricMinOrderAmount)
+    toast.success(`Template "${template.title}" aplicado com sucesso!`)
   }
 
   const availableOriginCountries = COUNTRIES.filter(
@@ -143,7 +197,71 @@ export function StorePolicyForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Policy Templates */}
         <div className="mb-8">
+          <div className="mb-4">
+            <h2 className="text-2xl font-semibold mb-2 text-gray-900">Templates de Política</h2>
+            <p className="text-gray-600 text-sm dark:text-gray-400">
+              Você pode aplicar um template de política para preencher automaticamente os campos ou configurar manualmente.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {POLICY_TEMPLATES.map((template) => (
+              <Card
+                key={template.title}
+                className="bg-[#f3f1ec] border-[#e0e0e0] hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-[#1DBE63] hover:scale-105"
+                onClick={() => applyTemplate(template)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-[#1DBE63] rounded-lg text-white">
+                      {template.icon}
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">{template.title}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">{template.description}</p>
+                  <div className="space-y-2 text-xs text-gray-700">
+                    <div className="flex justify-between">
+                      <span>Chargebacks máx:</span>
+                      <span className="font-semibold">{template.maxChargebacksPerCustomer}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Refunds máx:</span>
+                      <span className="font-semibold">{template.maxRefundsPerCustomer}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Biometria mín:</span>
+                      <span className="font-semibold">R$ {template.biometricMinOrderAmount}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Países bloqueados:</span>
+                      <span className="font-semibold">
+                        {template.blockedCountriesOrigin.length + template.blockedCountriesDestination.length}
+                      </span>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full mt-4 hover:bg-[#1DBE63] hover:text-white hover:border-[#1DBE63]"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      applyTemplate(template)
+                    }}
+                  >
+                    Usar este template
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+        
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold mb-2 text-gray-900">Configuração Manual</h2>
+          <p className="text-gray-600 text-sm dark:text-gray-400 pb-4">
+            Configure manualmente os campos da sua política
+          </p>
           <Card className="bg-[#f3f1ec] border-[#e0e0e0] text-white hover:shadow-lg transition-shadow duration-300">
             <CardContent>
               <div className="mt-6">

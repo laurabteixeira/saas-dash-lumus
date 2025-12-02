@@ -7,8 +7,16 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { File, FileSearch, List, Plus, TestTube } from "lucide-react"
 import AnimationDiv from "@/components/animation/animation-div"
+import { Store, useStoresStore } from "@/store/useStoresStore"
+import { useEffect } from "react"
 
 export default function PoliticasPage() {
+  const { fetchStores } = useStoresStore()
+
+  useEffect(() => {
+    fetchStores()
+  }, [fetchStores])
+  
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar currentPath="/politicas" />
@@ -20,20 +28,14 @@ export default function PoliticasPage() {
                 Políticas de Risco
               </h1>
               <p className="text-gray-600">
-                Crie, teste e publique regras de detecção de fraude e step-up de identidade
+                Confira as políticas de risco de cada loja e edite-as conforme necessário
               </p>
             </div>
-            <AnimationDiv position="center">
-              <Button variant="success" className="flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Nova Política
-              </Button>
-            </AnimationDiv>
           </div>
           
           <AnimationDiv position="left">
-            <PolicyKPICards />
-            
+            {/*<PolicyKPICards />*/} 
+            {/*
             <div className="flex items-center gap-4 justify-center pb-6">
               <Button variant="outline" className="group cursor-pointer flex hover:bg-[#1DBE63] hover:text-white flex-col h-full transition duration-300 p-4 items-center gap-2 w-full">
                 <File className="w-4 h-4 text-[#1DBE63] group-hover:text-white" />
@@ -52,27 +54,10 @@ export default function PoliticasPage() {
                 Auditorias
               </Button>
             </div>
+            */}
             
-            <Tabs defaultValue="ativas" className="w-full">
-              <TabsList className="mb-4">
-                <TabsTrigger value="ativas">Ativas (2)</TabsTrigger>
-                <TabsTrigger value="rascunhos">Rascunhos (0)</TabsTrigger>
-                <TabsTrigger value="arquivadas">Arquivadas (0)</TabsTrigger>
-              </TabsList>
-              <TabsContent className="" value="ativas">
-                <PolicyCards />
-              </TabsContent>
-              <TabsContent value="rascunhos">
-                <div className="text-center py-8 text-gray-500">
-                  Nenhum rascunho encontrado
-                </div>
-              </TabsContent>
-              <TabsContent value="arquivadas">
-                <div className="text-center py-8 text-gray-500">
-                  Nenhuma política arquivada
-                </div>
-              </TabsContent>
-            </Tabs>
+            <PolicyCards />
+            
           </AnimationDiv>
         </div>
       </main>

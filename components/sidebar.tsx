@@ -18,7 +18,7 @@ import Image from "next/image"
 const menuItems = [
   { icon: Plug, label: "Integrações", href: "/" },
   { icon: FileText, label: "Políticas", href: "/politicas" },
-  { icon: Calculator, label: "Simulador", href: "/simulador" },
+  //{ icon: Calculator, label: "Simulador", href: "/simulador" },
   { icon: BarChart3, label: "Resultados", href: "/resultados" },
   { icon: Activity, label: "Observabilidade", href: "/observabilidade" },
   { icon: User, label: "Identidade", href: "/identidade" },

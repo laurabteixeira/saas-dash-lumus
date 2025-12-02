@@ -1,7 +1,9 @@
 "use client"
 
+import { useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { CheckCircle2, XCircle, Clock, DollarSign } from "lucide-react"
+import { useOrdersMetricsStore } from "@/store/useOrdersMetricsStore"
 
 interface ResultsKPICardProps {
   title: string
@@ -39,7 +41,7 @@ function ResultsKPICard({
             {change && (
               <div className="flex items-center gap-1 text-sm mb-1">
                 <span className={changeType === "up" ? "text-green-600" : "text-red-600"}>
-                  {changeType === "up" ? "+" : ""}{change} vs período anterior
+                  {change} vs período anterior
                 </span>
               </div>
             )}
@@ -59,34 +61,89 @@ function ResultsKPICard({
 }
 
 export function ResultsKPICards() {
+  const { ordersMetrics, loading, error, fetchOrdersMetrics } = useOrdersMetricsStore()
+
+  useEffect(() => {
+    fetchOrdersMetrics()
+  }, [fetchOrdersMetrics])
+
+  const formatCurrency = (value: number): string => {
+    if (value >= 1000000) {
+      return `R$ ${(value / 1000000).toFixed(1)}M`
+    } else if (value >= 1000) {
+      return `R$ ${(value / 1000).toFixed(1)}k`
+    }
+    return `R$ ${value.toFixed(2)}`
+  }
+
+  const formatPercentage = (value: number): string => {
+    return `${value.toFixed(1)}%`
+  }
+
+  const formatDelta = (delta: number): string => {
+    return `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}%`
+  }
+
+  if (loading) {
+    return (
+      <div className="mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="bg-[#f3f1ec] border-[#e0e0e0]">
+              <CardContent className="p-6">
+                <div className="text-center py-4 text-gray-500">
+                  Carregando...
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="mb-8">
+        <div className="text-center py-8 text-red-500">
+          {error}
+        </div>
+      </div>
+    )
+  }
+
+  if (!ordersMetrics) {
+    return (
+      <div className="mb-8">
+        <div className="text-center py-8 text-gray-500">
+          Nenhuma métrica disponível
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="mb-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <ResultsKPICard
           title="Taxa de Aprovação"
-          value="72.5%"
-          change="2.3%"
-          changeType="up"
+          value={formatPercentage(ordersMetrics.approvalRate)}
+          change={ordersMetrics.approvalRateDelta ? formatDelta(ordersMetrics.approvalRateDelta) : undefined}
+          changeType={ordersMetrics.approvalRateDelta >= 0 ? "up" : "down"}
           icon={<CheckCircle2 className="w-5 h-5" />}
         />
         <ResultsKPICard
           title="Taxa de Recusa"
-          value="18.2%"
-          change="1.2%"
-          changeType="down"
+          value={formatPercentage(ordersMetrics.disapprovalRate)}
+          change={ordersMetrics.disapprovalRateDelta ? formatDelta(ordersMetrics.disapprovalRateDelta) : undefined}
+          changeType={ordersMetrics.disapprovalRateDelta >= 0 ? "down" : "up"}
           icon={<XCircle className="w-5 h-5" />}
         />
         <ResultsKPICard
-          title="Latência p95"
-          value="1450ms"
-          target="Dentro do SLO (≤1500ms)"
-          icon={<Clock className="w-5 h-5" />}
-        />
-        <ResultsKPICard
           title="Valor Aprovado"
-          value="R$ 2846k"
-          change="12.5%"
-          changeType="up"
+          value={formatCurrency(ordersMetrics.totalApprovedAmountCurrent)}
+          change={ordersMetrics.totalApprovedAmountDeltaPercent ? formatDelta(ordersMetrics.totalApprovedAmountDeltaPercent) : undefined}
+          changeType={ordersMetrics.totalApprovedAmountDeltaPercent >= 0 ? "up" : "down"}
           icon={<DollarSign className="w-5 h-5" />}
         />
       </div>

@@ -28,12 +28,12 @@ function StoreCard({ platform, status, url, id, lastSync, policy, currency, onCo
     switch (platform.toLowerCase()) {
       case "shopify":
         return "rose"
-      case "woocommerce":
-        return "purple"
-      case "magento":
-        return "orange"
-      case "wix":
+      case "nuvemshop":
         return "blue"
+      case "magento":
+        return "purple"
+      case "wix":
+        return "orange"
       default:
         return "default"
     }

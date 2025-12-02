@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { AlertTriangle } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useShopsMetricsStore } from "@/store/useShopsMetricsStore"
 
 interface RejectionReason {
   reason: string
@@ -48,13 +49,68 @@ function RejectionReasonBar({ reason, count, maxCount, index }: RejectionReasonB
 }
 
 export function RejectionReasons() {
-  const reasons: RejectionReason[] = [
-    { reason: "VPN_DETECTED", count: 234, maxCount: 234 },
-    { reason: "GEO_MISMATCH", count: 189, maxCount: 234 },
-    { reason: "IDENTITY_FAILED", count: 156, maxCount: 234 },
-    { reason: "HIGH_VELOCITY", count: 98, maxCount: 234 },
-    { reason: "DENY_LIST", count: 67, maxCount: 234 },
-  ]
+  const { shopsMetrics, loading, error, fetchShopsMetrics } = useShopsMetricsStore()
+
+  useEffect(() => {
+    fetchShopsMetrics()
+  }, [fetchShopsMetrics])
+
+  // Transform penaltiesRank data to RejectionReason format
+  const reasons: RejectionReason[] = shopsMetrics?.penaltiesRank
+    ? (() => {
+        const top5 = shopsMetrics.penaltiesRank.slice(0, 5) // Take only first 5
+        const maxCount = Math.max(...top5.map((item) => item.count), 0) // Calculate max count from top 5
+        return top5.map((item) => ({
+          reason: item.penalty,
+          count: item.count,
+          maxCount,
+        }))
+      })()
+    : []
+
+  const reasonsCount = reasons.length
+  const title = `Top ${reasonsCount} Raz${reasonsCount === 1 ? "ão" : "ões"} de Recusa`
+
+  if (loading) {
+    return (
+      <Card className="bg-[#f3f1ec] border-[#e0e0e0] mb-8">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <AlertTriangle className="w-5 h-5 text-orange-500" />
+            <h2 className="text-xl font-semibold text-gray-900">
+              {title}
+            </h2>
+          </div>
+          <div className="text-center py-8 text-gray-500">
+            Carregando...
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card className="bg-[#f3f1ec] border-[#e0e0e0] mb-8">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <AlertTriangle className="w-5 h-5 text-orange-500" />
+            <h2 className="text-xl font-semibold text-gray-900">
+              {title}
+            </h2>
+          </div>
+          <div className="text-center py-8 text-red-500">
+            {error}
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // Don't display the card if there are no reasons
+  if (!shopsMetrics || reasonsCount === 0) {
+    return null
+  }
 
   return (
     <Card className="bg-[#f3f1ec] border-[#e0e0e0] mb-8">
@@ -62,7 +118,7 @@ export function RejectionReasons() {
         <div className="flex items-center gap-2 mb-4">
           <AlertTriangle className="w-5 h-5 text-orange-500" />
           <h2 className="text-xl font-semibold text-gray-900">
-            Top 5 Razões de Recusa
+            {title}
           </h2>
         </div>
         <div>

@@ -14,9 +14,11 @@ export default function EditStorePolicyPage() {
   const formSubmitRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    if (params.storeId && !store) {
+    console.log("params.storeId", params.storeId)
+    if (params.storeId) {
       fetchStore(params.storeId)
     }
+    console.log("store", store)
   }, [params.storeId, fetchStore])
 
   const handleSave = () => {
@@ -45,7 +47,7 @@ export default function EditStorePolicyPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Editar Políticas
+                Editor de Políticas
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
                 {store.name} - {store.shopDomain}
