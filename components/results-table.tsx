@@ -14,50 +14,69 @@ import {
 import { Eye, FileText, AlertTriangle } from "lucide-react"
 import { useOrdersStore } from "@/store/useOrdersStore"
 import { formatDate } from "@/lib/utils"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { ActionTooltip } from "./utils/action-tooltip"
+import { useRouter } from "next/navigation"
+
+enum OrderTag {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  WAITING_BIOMETRY = "WAITING_BIOMETRY",
+  MANUAL_REVIEW = "MANUAL_REVIEW",
+}
 
 interface ResultsTableRowData {
   orderId: string
+  orderDbId: string
   store: string
   value: string
-  decision: "aprovado" | "recusado" | "revisao"
-  stepup: string
-  stepupStatus?: "success" | "failed"
+  decision: "aprovado" | "analise" | "aguardando_biometria" | "revisao_manual"
+  aprovacao: string
+  origem: string | null
+  destino: string
+  score: string | null
   country: string
   hasVpn?: boolean
   hasWarning?: boolean
-  latency: string
   date: string
 }
 
 function ResultsTableRow({
   orderId,
+  orderDbId,
   store,
   value,
   decision,
-  stepup,
-  stepupStatus,
+  aprovacao,
+  origem,
+  destino,
+  score,
   country,
   hasVpn,
   hasWarning,
-  latency,
   date
 }: ResultsTableRowData) {
+  const router = useRouter()
+
+  const handleViewDetails = () => {
+    router.push(`/resultados/${orderDbId}`)
+  }
   const getDecisionVariant = (decision: string) => {
     switch (decision) {
       case "aprovado":
         return "success"
-      case "recusado":
-        return "destructive"
-      case "revisao":
+      case "analise":
+      case "aguardando_biometria":
+      case "revisao_manual":
         return "secondary"
       default:
         return "default"
     }
   }
 
-  const getStepupVariant = (status?: string) => {
-    if (status === "failed") return "destructive"
-    return "secondary"
+  const getAprovacaoVariant = (aprovacao: string) => {
+    if (aprovacao === "Não requerido") return "secondary"
+    return "success"
   }
 
   return (
@@ -71,13 +90,28 @@ function ResultsTableRow({
       <TableCell className="text-sm text-gray-700 font-medium">{value}</TableCell>
       <TableCell>
         <Badge variant={getDecisionVariant(decision) as any} className="text-xs">
-          {decision === "aprovado" ? "Aprovado" : decision === "recusado" ? "Recusado" : "Revisão Manual"}
+          {decision === "aprovado" 
+            ? "Aprovado" 
+            : decision === "analise"
+            ? "Em análise"
+            : decision === "aguardando_biometria"
+            ? "Aguardando biometria"
+            : "Revisão Manual"}
         </Badge>
       </TableCell>
       <TableCell>
-        <Badge variant={getStepupVariant(stepupStatus) as any} className="text-xs">
-          {stepup}
+        <Badge variant={getAprovacaoVariant(aprovacao) as any} className="text-xs">
+          {aprovacao}
         </Badge>
+      </TableCell>
+      <TableCell className="text-sm text-gray-700">
+        {origem || "-"}
+      </TableCell>
+      <TableCell className="text-sm text-gray-700">
+        {destino}
+      </TableCell>
+      <TableCell className="text-sm text-gray-700">
+        {score ? parseFloat(score).toFixed(2) : "-"}
       </TableCell>
       <TableCell className="text-sm">
         <div className="flex items-center gap-1">
@@ -90,16 +124,14 @@ function ResultsTableRow({
           )}
         </div>
       </TableCell>
-      <TableCell className="text-sm text-gray-700">{latency}</TableCell>
       <TableCell className="text-sm text-gray-500">{date}</TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Eye className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <FileText className="w-4 h-4" />
-          </Button>
+          <ActionTooltip label="Ver detalhes">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleViewDetails}>
+              <Eye className="w-4 h-4" />
+            </Button>
+          </ActionTooltip>
         </div>
       </TableCell>
     </TableRow>
@@ -108,9 +140,10 @@ function ResultsTableRow({
 
 interface ResultsTableProps {
   searchQuery?: string
+  decisionFilter?: string
 }
 
-export function ResultsTable({ searchQuery = "" }: ResultsTableProps) {
+export function ResultsTable({ searchQuery = "", decisionFilter = "all" }: ResultsTableProps) {
   const { orders, loading, error, fetchOrders } = useOrdersStore()
 
   useEffect(() => {
@@ -123,56 +156,54 @@ export function ResultsTable({ searchQuery = "" }: ResultsTableProps) {
     return `${currencySymbol} ${amount.toFixed(2)}`
   }
 
-  const mapTagToDecision = (tag: string): "aprovado" | "recusado" | "revisao" => {
+  const mapTagToDecision = (tag: string): "aprovado" | "analise" | "aguardando_biometria" | "revisao_manual" => { 
     switch (tag.toUpperCase()) {
-      case "APPROVED":
+      case OrderTag.APPROVED:
         return "aprovado"
-      case "REJECTED":
-      case "DENIED":
-        return "recusado"
-      case "PENDING":
-      case "REVIEW":
-        return "revisao"
+      case OrderTag.PENDING:
+        return "analise"
+      case OrderTag.WAITING_BIOMETRY:
+        return "aguardando_biometria"
+      case OrderTag.MANUAL_REVIEW:
+        return "revisao_manual"
       default:
-        return "revisao"
+        return "revisao_manual"
     }
   }
 
-  const calculateLatency = (createdAt: string, updatedAt: string): string => {
-    try {
-      const created = new Date(createdAt).getTime()
-      const updated = new Date(updatedAt).getTime()
-      const diffMs = updated - created
-      
-      if (diffMs < 1000) {
-        return `${diffMs}ms`
-      } else {
-        return `${(diffMs / 1000).toFixed(2)}s`
-      }
-    } catch {
-      return "-"
-    }
+  const formatAprovacao = (approvedBy: string | null): string => {
+    if (!approvedBy) return "Não requerido"
+    return approvedBy.toUpperCase() === "LUMUS" ? "LUMUS" : approvedBy.toUpperCase() === "MERCHANT" ? "MERCHANT" : approvedBy
   }
 
   const allRows: ResultsTableRowData[] = orders.map((order) => ({
     orderId: order.platformOrderId,
+    orderDbId: order.id,
     store: order.shop?.name || order.shopId,
     value: formatCurrency(order.totalPriceCents, order.currency),
     decision: mapTagToDecision(order.tag),
-    stepup: order.approvedBy ? `${order.approvedBy} → approved` : "Não requerido",
-    stepupStatus: order.approvedBy ? "success" : undefined,
+    aprovacao: formatAprovacao(order.approvedBy),
+    origem: order.customer?.countryLast || null,
+    destino: order.countryDestCode,
+    score: order.customerScoreGrade,
     country: order.countryDestCode,
     date: formatDate(order.createdAt),
-    latency: calculateLatency(order.createdAt, order.updatedAt),
   }))
 
   const filteredRows = allRows.filter((row) => {
+    // Filter by decision
+    if (decisionFilter !== "all" && row.decision !== decisionFilter) {
+      return false
+    }
+
+    // Filter by search query
     if (!searchQuery.trim()) {
       return true
     }
     const query = searchQuery.toLowerCase().trim()
     const orderIdMatch = row.orderId.toLowerCase().includes(query)
-    return orderIdMatch 
+    const storeNameMatch = row.store.toLowerCase().includes(query)
+    return orderIdMatch || storeNameMatch
   })
 
   if (loading) {
@@ -198,7 +229,7 @@ export function ResultsTable({ searchQuery = "" }: ResultsTableProps) {
   return (
     <div className="bg-[#f3f1ec] rounded-lg border border-[#e0e0e0] shadow-sm overflow-hidden">
       <Table>
-        <TableHeader>
+        <TableHeader className="">
           <TableRow className="bg-[#f3f1ec] border-b border-[#e0e0e0]">
             <TableHead className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
               Order ID
@@ -213,13 +244,19 @@ export function ResultsTable({ searchQuery = "" }: ResultsTableProps) {
               Decisão
             </TableHead>
             <TableHead className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              Step-up
+              Aprovação
+            </TableHead>
+            <TableHead className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Origem
+            </TableHead>
+            <TableHead className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Destino
+            </TableHead>
+            <TableHead className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              Score
             </TableHead>
             <TableHead className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
               País
-            </TableHead>
-            <TableHead className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              Latência
             </TableHead>
             <TableHead className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
               Data
@@ -237,7 +274,7 @@ export function ResultsTable({ searchQuery = "" }: ResultsTableProps) {
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={9} className="text-center py-8 text-gray-500">
+              <TableCell colSpan={11} className="text-center py-8 text-gray-500">
                 Nenhum resultado encontrado
               </TableCell>
             </TableRow>

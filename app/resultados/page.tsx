@@ -13,6 +13,7 @@ import AnimationDiv from "@/components/animation/animation-div"
 
 export default function ResultadosPage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [decisionFilter, setDecisionFilter] = useState<string>("all")
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -30,10 +31,6 @@ export default function ResultadosPage() {
             </div>
             <AnimationDiv position="center">
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="w-4 h-4" />
-                Configurar
-              </Button>
               <Button variant="success" className="flex items-center gap-2">
                 <Download className="w-4 h-4" />
                 Exportar
@@ -51,13 +48,13 @@ export default function ResultadosPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
                 type="text"
-                placeholder="Buscar por Order ID ou External Ref..."
+                placeholder="Buscar por Order ID ou nome da loja..."
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Select>
+            <Select value={decisionFilter} onValueChange={setDecisionFilter}>
                 <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="Todas as decisões" />
                 </SelectTrigger>
@@ -71,21 +68,28 @@ export default function ResultadosPage() {
                     </SelectItem>
 
                     <SelectItem
-                    value="approved"
+                    value="aprovado"
                     className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
                     >
                         Aprovado
                     </SelectItem>
 
                     <SelectItem
-                    value="rejected"
+                    value="analise"
                     className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
                     >
-                        Recusadas
+                        Em análise
                     </SelectItem>
 
                     <SelectItem
-                    value="review"
+                    value="aguardando_biometria"
+                    className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
+                    >
+                        Aguardando Biometria
+                    </SelectItem>
+
+                    <SelectItem
+                    value="revisao_manual"
                     className="data-[state=checked]:bg-[#1DBE63] data-[state=checked]:text-white"
                     >
                         Revisão Manual
@@ -94,7 +98,7 @@ export default function ResultadosPage() {
             </Select>
           </div>
           
-          <ResultsTable searchQuery={searchQuery} />
+          <ResultsTable searchQuery={searchQuery} decisionFilter={decisionFilter} />
           </AnimationDiv>
         </div>
       </main>

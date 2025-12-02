@@ -20,8 +20,8 @@ const menuItems = [
   { icon: FileText, label: "Políticas", href: "/politicas" },
   //{ icon: Calculator, label: "Simulador", href: "/simulador" },
   { icon: BarChart3, label: "Resultados", href: "/resultados" },
-  { icon: Activity, label: "Observabilidade", href: "/observabilidade" },
-  { icon: User, label: "Identidade", href: "/identidade" },
+  //{ icon: Activity, label: "Observabilidade", href: "/observabilidade" },
+  //{ icon: User, label: "Identidade", href: "/identidade" },
   { icon: HelpCircle, label: "Suporte", href: "/suporte" },
 ]
 
