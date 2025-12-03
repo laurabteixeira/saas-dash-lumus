@@ -11,3 +11,9 @@ export async function GetShopsMetrics() {
         .then((response) => ({ success: true, data: response.data }))
         .catch((error) => ({ success: false, data: error.response.data.error_message }));
 }
+
+export async function GetShopMetrics(shopId: string) {
+    return apiClient.get(`/shop/metrics/${shopId}`)
+        .then((response) => ({ success: true, data: response.data }))
+        .catch((error) => ({ success: false, data: error.response.data.error_message }));
+}

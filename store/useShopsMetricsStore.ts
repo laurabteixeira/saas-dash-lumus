@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { GetShopsMetrics } from "@/services/merchantMetricsServices"
+import { GetShopMetrics, GetShopsMetrics } from "@/services/merchantMetricsServices"
 
 export interface ShopsMetrics {
   penaltiesRank: [
@@ -39,5 +39,55 @@ export const useShopsMetricsStore = create<ShopsMetricsState>((set) => ({
 
   setShopsMetrics: () => {
     set({ shopsMetrics: null })
+  },
+}))
+
+interface ShopMetrics {
+  totalOrders: number,
+  numberOfCurrentOrders: number,
+  numberOfCurrentApprovedOrders: number,
+  numberOfCurrentManualReviewOrders: number,
+  numberOfCurrentPendingOrders: number,
+  totalPriceOfApprovedOrders: number,
+  ordersPercentageChange: number,
+  approvedOrdersPercentageChange: number,
+  manualReviewPercentageChange: number,
+  totalPriceApprovedPercentageChange: number,
+  name: string,
+  shopDomain: string
+  createdAt: string,
+  scorePenalties: string[],
+  shopId: string
+}
+
+interface ShopMetricsState {
+  shopMetrics: ShopMetrics | null
+  loading: boolean
+  error: string | null
+  fetchShopMetrics: (shopId: string) => Promise<void>
+  clearShopMetrics: () => void
+}
+
+export const useShopMetricsStore = create<ShopMetricsState>((set) => ({
+  shopMetrics: null,
+  loading: false,
+  error: null,
+
+  fetchShopMetrics: async (shopId: string) => {
+    set({ loading: true, error: null })
+    try {
+      const result = await GetShopMetrics(shopId)
+      if (result.success && result.data) {
+        set({ shopMetrics: result.data.data, loading: false })
+      } else {
+        set({ error: result.data?.message || "Erro ao carregar métrics da loja", loading: false })
+      }
+    } catch (error: any) {
+      set({ error: error?.message || "Erro ao carregar métricas da loja", loading: false })
+    }
+  },
+
+  clearShopMetrics: () => {
+    set({ shopMetrics: null })
   },
 }))

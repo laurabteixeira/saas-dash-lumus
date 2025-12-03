@@ -33,7 +33,7 @@ export default function ResultadosPage() {
             <div className="flex items-center gap-2">
               <Button variant="success" className="flex items-center gap-2">
                 <Download className="w-4 h-4" />
-                Exportar
+                Exportar CSV
               </Button>
             </div>
             </AnimationDiv>

@@ -2,18 +2,20 @@
 
 import { useEffect, useState } from "react"
 import { Sidebar } from "@/components/sidebar"
-import { KPICards } from "@/components/kpi-cards"
 import { StoreCards } from "@/components/integration/store-cards"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import AnimationDiv from "@/components/animation/animation-div"
 import { useStoresStore, Store } from "@/store/useStoresStore"
 import { StorePolicyModal } from "@/components/modals/store-policy-modal"
+import { ShopMetricsModal } from "@/components/modals/shop-metrics-modal"
 
 export default function Home() {
   const { fetchStores } = useStoresStore()
   const [selectedStore, setSelectedStore] = useState<Store | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedShopId, setSelectedShopId] = useState<string | null>(null)
+  const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false)
 
   useEffect(() => {
     fetchStores()
@@ -28,6 +30,18 @@ export default function Home() {
     setIsModalOpen(open)
     if (!open) {
       setSelectedStore(null)
+    }
+  }
+
+  const handleViewMetrics = (shopId: string) => {
+    setSelectedShopId(shopId)
+    setIsMetricsModalOpen(true)
+  }
+
+  const handleMetricsModalClose = (open: boolean) => {
+    setIsMetricsModalOpen(open)
+    if (!open) {
+      setSelectedShopId(null)
     }
   }
 
@@ -52,11 +66,11 @@ export default function Home() {
               </Button>
             </AnimationDiv>
           </div>
-          {/*<AnimationDiv position="left">
-            <KPICards />
-          </AnimationDiv>*/}
           <AnimationDiv position="left">
-            <StoreCards onConfigurePolicies={handleConfigurePolicies} /> 
+            <StoreCards 
+              onConfigurePolicies={handleConfigurePolicies}
+              onViewMetrics={handleViewMetrics}
+            /> 
           </AnimationDiv>
           
         </div>
@@ -65,6 +79,11 @@ export default function Home() {
         open={isModalOpen}
         onOpenChange={handleModalClose}
         store={selectedStore}
+      />
+      <ShopMetricsModal
+        open={isMetricsModalOpen}
+        onOpenChange={handleMetricsModalClose}
+        shopId={selectedShopId}
       />
     </div>
   )

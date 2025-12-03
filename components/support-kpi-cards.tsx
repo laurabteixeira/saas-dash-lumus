@@ -1,12 +1,12 @@
 "use client"
 
+import { useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { 
   Inbox, 
-  Clock, 
-  CheckCircle, 
-  Star 
+  CheckCircle
 } from "lucide-react"
+import { useTicketsStore } from "@/store/useTicketsStore"
 
 interface SupportKPICardProps {
   title: string
@@ -42,32 +42,75 @@ function SupportKPICard({
 }
 
 export function SupportKPICards() {
+  const { tickets, loading } = useTicketsStore()
+
+  const kpis = useMemo(() => {
+    const totalTickets = tickets.length
+    const pendingTickets = tickets.filter(t => t.status.toUpperCase() === "PENDING").length
+    const resolvedTickets = tickets.filter(t => t.status.toUpperCase() === "RESOLVED").length
+    const closedTickets = tickets.filter(t => t.status.toUpperCase() === "CLOSED").length
+
+    const completedTickets = tickets.filter(t => 
+      t.status.toUpperCase() === "RESOLVED" || t.status.toUpperCase() === "CLOSED"
+    )
+    
+    const ticketsWithGoodSla = completedTickets.filter(t => {
+      const slaStatus = t.slaStatus?.toUpperCase()
+      return slaStatus === "FAST" || slaStatus === "NORMAL"
+    }).length
+
+    const slaPercentage = completedTickets.length > 0
+      ? ((ticketsWithGoodSla / completedTickets.length) * 100).toFixed(1)
+      : "0"
+
+    const criticalSlaCount = completedTickets.filter(t => {
+      const slaStatus = t.slaStatus?.toUpperCase()
+      return slaStatus === "CRITICAL"
+    }).length
+
+    return {
+      totalTickets,
+      pendingTickets,
+      resolvedTickets,
+      closedTickets,
+      slaPercentage,
+      criticalSlaCount,
+      completedTicketsCount: completedTickets.length
+    }
+  }, [tickets])
+
+  if (loading) {
+    return (
+      <div className="mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2].map((i) => (
+            <Card key={i} className="bg-[#f3f1ec] border-[#e0e0e0]">
+              <CardContent className="p-6">
+                <div className="text-center py-4 text-gray-500">
+                  Carregando...
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="mb-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <SupportKPICard
-          title="Backlog Total"
-          value="30"
-          description="12 abertos · 3 escalados"
+          title="Todos os Tickets"
+          value={kpis.totalTickets.toString()}
+          description={`${kpis.pendingTickets} abertos · ${kpis.resolvedTickets} resolvidos`}
           icon={<Inbox className="w-5 h-5" />}
         />
         <SupportKPICard
-          title="FRT (p90)"
-          value="180 min"
-          description="p50: 45 min"
-          icon={<Clock className="w-5 h-5" />}
-        />
-        <SupportKPICard
           title="SLA Atingido"
-          value="92.5%"
-          description="3 violados"
+          value={`${kpis.slaPercentage}%`}
+          description={kpis.criticalSlaCount > 0 ? `${kpis.criticalSlaCount} críticos` : "Sem violações"}
           icon={<CheckCircle className="w-5 h-5" />}
-        />
-        <SupportKPICard
-          title="CSAT Médio"
-          value="4.2/5"
-          description="5.3% reabertos"
-          icon={<Star className="w-5 h-5" />}
         />
       </div>
     </div>

@@ -1,13 +1,27 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import AnimationDiv from "@/components/animation/animation-div"
 import { Sidebar } from "@/components/sidebar"
 import { SupportKPICards } from "@/components/support-kpi-cards"
 import { TicketsTable } from "@/components/tickets-table"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import { useTicketsStore } from "@/store/useTicketsStore"
+import { CreateTicketModal } from "@/components/modals/create-ticket-modal"
 
 export default function SuportePage() {
+  const { fetchTickets } = useTicketsStore()
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+
+  useEffect(() => {
+    fetchTickets()
+  }, [fetchTickets])
+
+  const handleTicketCreated = () => {
+    fetchTickets()
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar currentPath="/suporte" />
@@ -23,7 +37,11 @@ export default function SuportePage() {
               </p>
             </div>
             <AnimationDiv position="center">
-              <Button variant="success" className="flex items-center gap-2">
+              <Button 
+                variant="success" 
+                className="flex items-center gap-2"
+                onClick={() => setIsCreateModalOpen(true)}
+              >
                 <Plus className="w-4 h-4" />
                 Abrir Ticket
               </Button>
@@ -37,6 +55,11 @@ export default function SuportePage() {
           </AnimationDiv>
         </div>
       </main>
+      <CreateTicketModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onTicketCreated={handleTicketCreated}
+      />
     </div>
   )
 }

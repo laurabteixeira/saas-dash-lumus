@@ -4,12 +4,9 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { 
   Plug, 
-  FileText, 
-  Calculator, 
+  FileText,  
   BarChart3, 
-  Activity, 
-  User, 
-  HelpCircle 
+  Wrench
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Separator } from "./ui/separator"
@@ -22,7 +19,7 @@ const menuItems = [
   { icon: BarChart3, label: "Resultados", href: "/resultados" },
   //{ icon: Activity, label: "Observabilidade", href: "/observabilidade" },
   //{ icon: User, label: "Identidade", href: "/identidade" },
-  { icon: HelpCircle, label: "Suporte", href: "/suporte" },
+  { icon: Wrench, label: "Suporte", href: "/suporte" },
 ]
 
 export function Sidebar({ currentPath }: { currentPath?: string }) {

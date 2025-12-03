@@ -14,16 +14,19 @@ import {
 
 interface StoreCardProps {
   platform: string
+  id: string
   status: "active" | "paused" | "failed"
   url: string
-  id: string
+  shopId: string
   lastSync?: string
   policy?: string
   currency?: string
   onConfigurePolicies: () => void
+  onViewMetrics: () => void
 }
 
-function StoreCard({ platform, status, url, id, lastSync, policy, currency, onConfigurePolicies }: StoreCardProps) {
+function StoreCard({ platform, status, url, id, shopId, lastSync, policy, currency, onConfigurePolicies, onViewMetrics }: StoreCardProps) {
+
   const getPlatformColor = (platform: string) => {
     switch (platform.toLowerCase()) {
       case "shopify":
@@ -94,9 +97,9 @@ function StoreCard({ platform, status, url, id, lastSync, policy, currency, onCo
                 <Settings className="w-4 h-4 mr-2" /> Ver políticas
               </DropdownMenuItem>
               <DropdownMenuItem  
-                onClick={() => {}}
+                onClick={onViewMetrics}
               >
-                <BarChart3 className="w-4 h-4 mr-2" /> Ver estatísticas
+                <BarChart3 className="w-4 h-4 mr-2" /> Ver métricas
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -106,7 +109,7 @@ function StoreCard({ platform, status, url, id, lastSync, policy, currency, onCo
             <p className="text-sm font-medium text-gray-900">{url}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">ID: {id}</p>
+            <p className="text-xs text-gray-500">ID: {shopId}</p>
           </div>
           {lastSync && (
             <div>
@@ -129,9 +132,10 @@ function StoreCard({ platform, status, url, id, lastSync, policy, currency, onCo
 
 interface StoreCardsProps {
   onConfigurePolicies: (store: Store) => void
+  onViewMetrics: (shopId: string) => void
 }
 
-export function StoreCards({ onConfigurePolicies }: StoreCardsProps) {
+export function StoreCards({ onConfigurePolicies, onViewMetrics }: StoreCardsProps) {
   const { stores, loading, error } = useStoresStore()
 
   if (loading) {
@@ -181,15 +185,17 @@ export function StoreCards({ onConfigurePolicies }: StoreCardsProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {stores.map((store) => (
           <StoreCard 
+            id={store.id}
             key={store.shopId} 
             platform={(store.platform).toLowerCase() as string}
             status={store.status as "active" | "paused" | "failed"}
             url={store.shopDomain}
-            id={store.shopId}
+            shopId={store.shopId}
             lastSync={store.createdAt}
             policy={store.shopPolicy.title}
             currency={store.currency}
             onConfigurePolicies={() => onConfigurePolicies(store)}
+            onViewMetrics={() => onViewMetrics(store.id)}
           />
         ))}
       </div>

@@ -78,7 +78,7 @@ export const RiskDetails = ({ order }: RiskDetailsProps) => {
                             <p>{order.riskResults.proxyDetected ? "Sim" : "Não"}</p>
                         </div>
                         <div className="flex flex-col">
-                            <p className="text-muted-foreground text-sm">Proxy Type:</p>
+                            <p className="text-muted-foreground text-sm">Tipo do Proxy:</p>
                             <p>{order.riskResults.proxyType.toUpperCase()}</p>
                         </div>
                         <div className="flex flex-col">
@@ -90,11 +90,11 @@ export const RiskDetails = ({ order }: RiskDetailsProps) => {
                             <p>{order.riskResults.botDetected ? "Sim" : "Não"}</p>
                         </div>
                         <div className="flex flex-col">
-                            <p className="text-muted-foreground text-sm">Biometry Needed:</p>
+                            <p className="text-muted-foreground text-sm">Pediu Biometria:</p>
                             <p>{order.riskResults.biometryNeeded ? "Sim" : "Não"}</p>
                         </div>
                         <div className="flex flex-col">
-                            <p className="text-muted-foreground text-sm">Decision:</p>
+                            <p className="text-muted-foreground text-sm">Resultado:</p>
                             <div><Badge variant={getDecisionVariant(order.riskResults.decision)}>{order.riskResults.decision}</Badge></div>
                         </div>
                     </div>

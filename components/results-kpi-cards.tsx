@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle2, XCircle, Clock, DollarSign } from "lucide-react"
+import { CheckCircle2, XCircle, DollarSign } from "lucide-react"
 import { useOrdersMetricsStore } from "@/store/useOrdersMetricsStore"
 
 interface ResultsKPICardProps {
@@ -128,22 +128,22 @@ export function ResultsKPICards() {
         <ResultsKPICard
           title="Taxa de Aprovação"
           value={formatPercentage(ordersMetrics.approvalRate)}
-          change={ordersMetrics.approvalRateDelta ? formatDelta(ordersMetrics.approvalRateDelta) : undefined}
-          changeType={ordersMetrics.approvalRateDelta >= 0 ? "up" : "down"}
+          change={ordersMetrics.approvalRatePercentageChange ? formatDelta(ordersMetrics.approvalRatePercentageChange) : undefined}
+          changeType={ordersMetrics.approvalRatePercentageChange >= 0 ? "up" : "down"}
           icon={<CheckCircle2 className="w-5 h-5" />}
         />
         <ResultsKPICard
           title="Taxa de Recusa"
           value={formatPercentage(ordersMetrics.disapprovalRate)}
-          change={ordersMetrics.disapprovalRateDelta ? formatDelta(ordersMetrics.disapprovalRateDelta) : undefined}
-          changeType={ordersMetrics.disapprovalRateDelta >= 0 ? "down" : "up"}
+          change={ordersMetrics.approvalRatePercentageChange ? formatDelta(ordersMetrics.approvalRatePercentageChange) : undefined}
+          changeType={ordersMetrics.approvalRatePercentageChange >= 0 ? "down" : "up"}
           icon={<XCircle className="w-5 h-5" />}
         />
         <ResultsKPICard
           title="Valor Aprovado"
           value={formatCurrency(ordersMetrics.totalApprovedAmountCurrent)}
-          change={ordersMetrics.totalApprovedAmountDeltaPercent ? formatDelta(ordersMetrics.totalApprovedAmountDeltaPercent) : undefined}
-          changeType={ordersMetrics.totalApprovedAmountDeltaPercent >= 0 ? "up" : "down"}
+          change={ordersMetrics.totalApprovedAmountPercentageChange ? formatDelta(ordersMetrics.totalApprovedAmountPercentageChange) : undefined}
+          changeType={ordersMetrics.totalApprovedAmountPercentageChange >= 0 ? "up" : "down"}
           icon={<DollarSign className="w-5 h-5" />}
         />
       </div>

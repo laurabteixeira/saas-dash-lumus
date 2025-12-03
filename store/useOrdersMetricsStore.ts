@@ -4,10 +4,10 @@ import { GetOrdersMetrics } from "@/services/merchantMetricsServices"
 export interface OrdersMetrics {
   approvalRate: number,
   disapprovalRate: number,
-  approvalRateDelta: number,
-  disapprovalRateDelta: number,
   totalApprovedAmountCurrent: number,
-  totalApprovedAmountDeltaPercent: number,
+  approvalRatePercentageChange: number,
+  disapprovalRatePercentageChange: number,
+  totalApprovedAmountPercentageChange: number,
 }
 
 interface OrdersMetricsState {
