@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react"
 import AnimationDiv from "@/components/animation/animation-div"
-import { Sidebar } from "@/components/sidebar"
-import { SupportKPICards } from "@/components/support-kpi-cards"
-import { TicketsTable } from "@/components/tickets-table"
+import { Sidebar } from "@/components/navigation/sidebar"
+import { SupportKPICards } from "@/components/support/support-kpi-cards"
+import { TicketsTable } from "@/components/support/tickets-table"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useTicketsStore } from "@/store/useTicketsStore"
 import { CreateTicketModal } from "@/components/modals/create-ticket-modal"
+import { MobileMenu } from "@/components/navigation/mobile-menu"
 
 export default function SuportePage() {
   const { fetchTickets } = useTicketsStore()
@@ -25,16 +26,19 @@ export default function SuportePage() {
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar currentPath="/suporte" />
-      <main className="flex-1 ml-64 h-screen overflow-y-auto p-8">
+      <main className="flex-1 lg:ml-64 h-screen overflow-y-auto p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Suporte
-              </h1>
-              <p className="text-gray-600">
-                Gerencie tickets e atendimento ao cliente
-              </p>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <MobileMenu currentPath="/suporte" />
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                  Suporte
+                </h1>
+                <p className="text-sm sm:text-base text-gray-600">
+                  Gerencie tickets e atendimento ao cliente
+                </p>
+              </div>
             </div>
             <AnimationDiv position="center">
               <Button 

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Card, CardContent } from "@/components/ui/card"
 import { useShopMetricsStore } from "@/store/useShopsMetricsStore"
-import { ShoppingCart, CheckCircle2, AlertCircle, DollarSign, TrendingUp, TrendingDown, BarChart3, Dot, Hand, PauseCircle, Search, Frown } from "lucide-react"
+import { ShoppingCart, CheckCircle2, DollarSign, TrendingUp, TrendingDown, BarChart3, Hand, PauseCircle, Search, Frown } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
@@ -49,7 +49,7 @@ export function ShopMetricsModal({ open, onOpenChange, shopId }: ShopMetricsModa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl p-8 max-h-[90vh] overflow-y-auto bg-[#ffffff]">
+      <DialogContent className="max-w-4xl w-[95vw] sm:w-full p-4 sm:p-6 lg:p-8 max-h-[90vh] overflow-y-auto bg-[#ffffff]">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <BarChart3 className="w-6 h-6 text-gray-900" />

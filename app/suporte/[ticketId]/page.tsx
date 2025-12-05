@@ -2,14 +2,15 @@
 
 import { useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { Sidebar } from "@/components/sidebar"
+import { Sidebar } from "@/components/navigation/sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, FileText, Clock, User, CheckCircle, XCircle, AlertCircle, Frown, Smile } from "lucide-react"
+import { ArrowLeft, FileText, Clock, CheckCircle, Smile } from "lucide-react"
 import { useTicketStore } from "@/store/useTicketsStore"
 import { formatDate } from "@/lib/utils"
+import { MobileMenu } from "@/components/navigation/mobile-menu"
 
 const mapStatusToDisplay = (status: string): string => {
   const statusMap: Record<string, string> = {
@@ -114,18 +115,19 @@ export default function TicketDetailPage() {
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar currentPath="/suporte" />
-      <main className="flex-1 ml-64 h-screen overflow-y-auto p-8">
+        <main className="flex-1 lg:ml-64 h-screen overflow-y-auto p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <MobileMenu currentPath="/suporte" />
               <Button variant="ghost" onClick={() => router.push("/suporte")} className="flex items-center gap-2">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   Detalhes do Ticket
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                   {ticket.id}
                 </p>
               </div>

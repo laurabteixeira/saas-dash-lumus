@@ -103,7 +103,7 @@ export function SupportKPICards() {
         <SupportKPICard
           title="Todos os Tickets"
           value={kpis.totalTickets.toString()}
-          description={`${kpis.pendingTickets} abertos · ${kpis.resolvedTickets} resolvidos`}
+          description={`${kpis.pendingTickets} aberto(s) · ${kpis.resolvedTickets} resolvido(s) · ${kpis.closedTickets} fechado(s)`}
           icon={<Inbox className="w-5 h-5" />}
         />
         <SupportKPICard

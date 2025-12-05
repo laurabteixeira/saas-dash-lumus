@@ -23,7 +23,7 @@ export async function GetTickets() {
         .catch((error) => ({ success: false, data: error.response.data.error_message }));
 }
 
-enum TicketStatus {
+export enum TicketStatus {
     CLOSED = "CLOSED",
 }
 

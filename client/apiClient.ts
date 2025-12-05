@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_URL = process.env.LUMUS_API_DEV_URL || "http://localhost:4000";
 
 function getApiTokenFromCookie(): string | null {
   if (typeof document === "undefined") return null;

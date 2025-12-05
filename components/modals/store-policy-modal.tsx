@@ -35,7 +35,7 @@ export function StorePolicyModal({ open, onOpenChange, store }: StorePolicyModal
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-8 max-h-[90vh] overflow-y-auto bg-[#ffffff]">
+      <DialogContent className="max-w-2xl w-[95vw] sm:w-full p-4 sm:p-6 lg:p-8 max-h-[90vh] overflow-y-auto bg-[#ffffff]">
         <DialogHeader className="pt-3">
           <div className="flex items-center justify-between">
             <div>

@@ -69,7 +69,7 @@ export function CreateTicketModal({ open, onOpenChange, onTicketCreated }: Creat
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl p-8 bg-[#ffffff]">
+      <DialogContent className="max-w-2xl w-[95vw] sm:w-full p-4 sm:p-6 lg:p-8 bg-[#ffffff]">
         <DialogHeader className="pt-3">
           <div className="flex items-center gap-2">
             <Plus className="w-6 h-6 text-gray-900" />

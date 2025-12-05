@@ -1,4 +1,3 @@
-// StorePolicyForm.tsx
 "use client"
 
 import { useState, useEffect } from "react"
@@ -197,7 +196,6 @@ export function StorePolicyForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* Policy Templates */}
         <div className="mb-8">
           <div className="mb-4">
             <h2 className="text-2xl font-semibold mb-2 text-gray-900">Templates de Política</h2>

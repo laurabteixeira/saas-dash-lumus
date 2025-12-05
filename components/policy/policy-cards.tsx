@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Pen, Globe, ShieldCheck, ScanFace } from "lucide-react"
-import { Separator } from "./ui/separator"
+import { Separator } from "../ui/separator"
 import { useStoresStore } from "@/store/useStoresStore"
 
 interface PolicyCardProps {
@@ -36,8 +36,6 @@ function PolicyCard({
   maxChargebacksPerCustomer,
   maxRefundsPerCustomer,
   biometricMinOrderAmount,
-  policyId,
-  shopId,
 }: PolicyCardProps) {
   const router = useRouter()
 

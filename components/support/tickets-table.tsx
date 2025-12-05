@@ -19,12 +19,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Clock, EyeIcon, PencilIcon, XCircle } from "lucide-react"
+import { EyeIcon, XCircle } from "lucide-react"
 import { useTicketsStore } from "@/store/useTicketsStore"
 import { formatDate } from "@/lib/utils"
-import { Button } from "./ui/button"
-import { ActionTooltip } from "./utils/action-tooltip"
+import { Button } from "../ui/button"
+import { ActionTooltip } from "../utils/action-tooltip"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { TicketStatus, UpdateTicket } from "@/services/ticketServices"
 
 const mapStatusToDisplay = (status: string): string => {
   const statusMap: Record<string, string> = {
@@ -33,6 +35,20 @@ const mapStatusToDisplay = (status: string): string => {
     "CLOSED": "Fechado"
   }
   return statusMap[status.toUpperCase()] || status
+}
+
+const getStatusBadge = (status: string) => {
+  const displayStatus = mapStatusToDisplay(status)
+  switch (displayStatus) {
+    case "Aberto":
+      return <Badge className="bg-blue-600 text-white border-transparent hover:bg-blue-600/80">Aberto</Badge>
+    case "Resolvido":
+      return <Badge className="bg-green-600 text-white border-transparent hover:bg-green-600/80">Resolvido</Badge>
+    case "Fechado":
+      return <Badge className="bg-gray-600 text-white border-transparent hover:bg-gray-600/80">Fechado</Badge>
+    default:
+      return <Badge>{displayStatus}</Badge>
+  }
 }
 
 const mapSlaStatusToDisplay = (slaStatus: string): string => {
@@ -45,31 +61,17 @@ const mapSlaStatusToDisplay = (slaStatus: string): string => {
   return slaStatusMap[slaStatus.toUpperCase()] || status
 }
 
-const getStatusBadge = (status: string) => {
-  const displayStatus = mapStatusToDisplay(status)
-  switch (displayStatus) {
-    case "Aberto":
-      return <Badge className="bg-blue-600 text-white border-transparent">Aberto</Badge>
-    case "Resolvido":
-      return <Badge className="bg-green-600 text-white border-transparent">Resolvido</Badge>
-    case "Fechado":
-      return <Badge className="bg-gray-600 text-white border-transparent">Fechado</Badge>
-    default:
-      return <Badge>{displayStatus}</Badge>
-  }
-}
-
 const getSlaStatusBadge = (slaStatus: string) => {
   const displaySlaStatus = mapSlaStatusToDisplay(slaStatus)
   switch (displaySlaStatus) {
     case "Rápido":
-      return <Badge className="bg-lime-500 text-white border-transparent">Rápido</Badge>
+      return <Badge className="bg-lime-500 text-white border-transparent hover:bg-lime-500/80">Rápido</Badge>
     case "Normal":
-      return <Badge className="bg-green-600 text-white border-transparent">Resolvido</Badge>
+      return <Badge className="bg-green-600 text-white border-transparent hover:bg-green-600/80">Resolvido</Badge>
     case "Lento":
-      return <Badge className="bg-orange-500 text-white border-transparent">Lento</Badge>
+      return <Badge className="bg-orange-500 text-white border-transparent hover:bg-orange-500/80">Lento</Badge>
     case "Crítico":
-      return <Badge className="bg-red-500 text-white border-transparent">Crítico</Badge>
+      return <Badge className="bg-red-500 text-white border-transparent hover:bg-red-500/80">Crítico</Badge>
     case "":
       return <>-</>
     default:
@@ -77,25 +79,31 @@ const getSlaStatusBadge = (slaStatus: string) => {
   }
 }
 
-const getSLABadge = (timeToResolve: string | null) => {
-  if (!timeToResolve) {
-    return <Badge className="bg-gray-600 text-white border-transparent flex items-center gap-1">
-      <Clock className="w-3 h-3" />
-      Normal
-    </Badge>
-  }
-  
-  return <Badge className="bg-gray-600 text-white border-transparent flex items-center gap-1">
-    <Clock className="w-3 h-3" />
-    Normal
-  </Badge>
-}
-
 export function TicketsTable() {
   const { tickets, loading, error } = useTicketsStore()
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  const { fetchTickets } = useTicketsStore()
+
+  const handleCloseTicket = async (ticketId: string) => {
+    try {
+      const response = await UpdateTicket({
+        ticketId,
+        status: "CLOSED" as TicketStatus
+      })
+  
+      if (response.success) {
+        toast.success("Ticket fechado com sucesso!")
+        fetchTickets()
+      } else {
+        toast.error("Erro ao fechar ticket.")
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error("Erro ao fechar ticket.")
+    }
+  }
 
   const getStatusValue = (filterValue: string): string | null => {
     const statusMap: Record<string, string> = {
@@ -128,15 +136,15 @@ export function TicketsTable() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             <Input
               placeholder="Buscar por ticket, assunto ou solicitante..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
+              className="flex-1 w-full"
             />
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Todos os status" />
               </SelectTrigger>
               <SelectContent className="bg-white border-none">
@@ -148,7 +156,7 @@ export function TicketsTable() {
             </Select>
           </div>
 
-          <div className="rounded-md border-none">
+          <div className="rounded-md border-none overflow-x-auto">
             <Table className="bg-[#f3f1ec] border-none">
               <TableHeader className="border-b border-b-[#e0e0e0]">
                 <TableRow className="bg-[#f3f1ec] border-none">
@@ -205,7 +213,9 @@ export function TicketsTable() {
                           </ActionTooltip>
                           {ticket.status === "PENDING" && (
                             <ActionTooltip label="Fechar Ticket">
-                              <Button variant="ghost" className="hover:text-rose-500"><XCircle className="w-4 h-4" /></Button>
+                              <Button variant="ghost" className="hover:text-rose-500" onClick={() => handleCloseTicket(ticket.id)}>
+                                <XCircle className="w-4 h-4" />
+                              </Button>
                             </ActionTooltip>
                           )}
                         </div>
@@ -221,3 +231,4 @@ export function TicketsTable() {
     </Card>
   )
 }
+

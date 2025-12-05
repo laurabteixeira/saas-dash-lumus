@@ -6,9 +6,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Format ISO date string to Brazilian format: DD/MM/YYYY - HH:mm
- * @param dateString - ISO date string (e.g., "2025-11-13T20:04:41.009Z")
- * @returns Formatted date string (e.g., "13/11/2025 - 20:04")
+ * @param dateString 
+ * @returns 
  */
 export function formatDate(dateString: string): string {
   try {

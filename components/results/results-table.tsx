@@ -11,11 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Eye, FileText, AlertTriangle } from "lucide-react"
+import { Eye, AlertTriangle } from "lucide-react"
 import { useOrdersStore } from "@/store/useOrdersStore"
 import { formatDate } from "@/lib/utils"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
-import { ActionTooltip } from "./utils/action-tooltip"
+import { ActionTooltip } from "../utils/action-tooltip"
 import { useRouter } from "next/navigation"
 
 enum OrderTag {
@@ -151,7 +150,7 @@ export function ResultsTable({ searchQuery = "", decisionFilter = "all" }: Resul
   }, [fetchOrders])
 
   const formatCurrency = (cents: number, currency: string): string => {
-    const amount = cents / 100
+    const amount = cents
     const currencySymbol = currency === "USD" ? "$" : currency === "BRL" ? "R$" : currency
     return `${currencySymbol} ${amount.toFixed(2)}`
   }
@@ -228,6 +227,7 @@ export function ResultsTable({ searchQuery = "", decisionFilter = "all" }: Resul
 
   return (
     <div className="bg-[#f3f1ec] rounded-lg border border-[#e0e0e0] shadow-sm overflow-hidden">
+      <div className="overflow-x-auto">
       <Table>
         <TableHeader className="">
           <TableRow className="bg-[#f3f1ec] border-b border-[#e0e0e0]">
@@ -281,6 +281,7 @@ export function ResultsTable({ searchQuery = "", decisionFilter = "all" }: Resul
           )}
         </TableBody>
       </Table>
+      </div>
     </div>
   )
 }

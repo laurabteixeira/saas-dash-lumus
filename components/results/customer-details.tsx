@@ -17,8 +17,6 @@ const getScoreColorClasses = (score: string): string => {
       return "border-amber-500 text-amber-500"
     case "D":
       return "border-orange-500 text-orange-500"
-    case "E":
-      return "border-rose-500 text-rose-500"
     case "F":
       return "border-red-500 text-red-500"
     default:

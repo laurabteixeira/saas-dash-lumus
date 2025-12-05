@@ -1,8 +1,7 @@
 import { Order } from "@/store/useOrdersStore"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
-import { formatDate } from "@/lib/utils"
-import { Computer, FlaskConical, Package } from "lucide-react"
+import { FlaskConical} from "lucide-react"
 import { Separator } from "../ui/separator"
 
 interface RiskDetailsProps {
